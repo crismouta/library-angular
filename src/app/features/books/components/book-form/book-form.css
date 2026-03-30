@@ -1,0 +1,18 @@
+form {
+    display: grid;
+    gap: 1rem;
+    max-width: 420px;
+}
+
+div {
+    display: grid;
+    gap: 0.25rem;
+}
+
+input {
+    padding: 0.5rem;
+}
+
+small {
+    color: #c62828;
+}

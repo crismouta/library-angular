@@ -1,0 +1,26 @@
+@let currentBook = book();
+
+@if (currentBook) {
+<section>
+    <h2>{{ currentBook.title }}</h2>
+    <p><strong>Autor:</strong> {{ currentBook.author }}</p>
+    <p><strong>Categoría:</strong> {{ currentBook.category }}</p>
+
+    <div>
+        <button type="button" (click)="onDelete()">Eliminar</button>
+        <button type="button" (click)="navigateToBookList()">Volver al listado</button>
+    </div>
+
+    <hr />
+
+    <h3>Editar libro</h3>
+    <app-book-form [initialValue]="currentBook" submitLabel="Guardar cambios"
+        (formSubmit)="onUpdateBook($event)"></app-book-form>
+</section>
+} @else {
+<section>
+    <h2>Error 404</h2>
+    <p>No existe ningún libro con ID "{{ bookId() }}".</p>
+    <button type="button" (click)="navigateToBookList()">Volver al listado</button>
+</section>
+}

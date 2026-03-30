@@ -23,18 +23,6 @@
       "title": "Don Quijote de la Mancha",
       "author": "Miguel de Cervantes",
       "category": "Clásico"
-    },
-    {
-      "id": "7gB1o_kydqg",
-      "title": "updated 3",
-      "author": "uodates",
-      "category": "fdghgfh"
-    },
-    {
-      "id": "06byZw8xx3c",
-      "title": "twreuuyr",
-      "author": "6",
-      "category": "6"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
