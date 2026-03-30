@@ -1,8 +1,8 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BooksService } from '../../../../core/services/books-service';
+import { BooksService } from '../../../../core/services/book-store-service/books-store.service';
 import { BookForm } from '../../components/book-form/book-form';
-import { Book, CreateBookDto } from '../../../../shared/models/book.model';
+import { Book, CreateBookDto } from '../../models/book.model';
 
 @Component({
   selector: 'app-book-details',

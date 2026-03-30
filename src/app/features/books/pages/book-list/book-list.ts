@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
-import { BooksService } from '../../../../core/services/books-service';
+import { BooksService } from '../../../../core/services/book-store-service/books-store.service';
 import { BookForm } from '../../components/book-form/book-form';
 import { BookItem } from '../../components/book-item/book-item';
-import { CreateBookDto } from '../../../../shared/models/book.model';
+import { CreateBookDto } from '../../models/book.model';
 
 @Component({
   selector: 'app-book-list',

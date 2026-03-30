@@ -1,13 +1,13 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Book, CreateBookDto, UpdateBookDto } from '../../shared/models/book.model';
 import { HttpClient } from '@angular/common/http';
+import { Book, CreateBookDto, UpdateBookDto } from '../../../features/books/models/book.model';
+import { BookApiService } from '../book-api-service/book-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BooksService {
-  private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000/books';
+  private readonly bookApiService = inject(BookApiService);
 
   private readonly _books = signal<Book[]>([]);
   readonly books = this._books.asReadonly();
@@ -36,13 +36,13 @@ export class BooksService {
     this._isLoading.set(true);
     this._error.set(null);
 
-    this.http.get<Book[]>(this.API_URL).subscribe({
+    this.bookApiService.getBooks().subscribe({
       next: (books) => {
         this._books.set(books);
         this._isLoading.set(false);
       },
       error: () => {
-        this._error.set('There is no books');
+        this._error.set('Failed to load books.');
         this._isLoading.set(false);
       }
     })
@@ -51,7 +51,7 @@ export class BooksService {
   addBook(book: CreateBookDto): void {
     this._error.set(null);
 
-    this.http.post<Book>(this.API_URL, book).subscribe({
+    this.bookApiService.createBook(book).subscribe({
       next: (createdBook) => {
         this._books.update((current) => [...current, createdBook])
       },
@@ -64,7 +64,7 @@ export class BooksService {
   updateBook(book: UpdateBookDto): void {
     this._error.set(null);
 
-    this.http.put<Book>(`${this.API_URL}/${book.id}`, book).subscribe({
+    this.bookApiService.updateBook(book).subscribe({
       next: (updateBook) => {
         this._books.update((current) => 
           current.map((item) => (item.id === updateBook.id ? updateBook : item))
@@ -79,7 +79,7 @@ export class BooksService {
   deleteBook(id: string): void {
     this._error.set(null);
 
-    this.http.delete<void>(`${this.API_URL}/${id}`).subscribe({
+    this.bookApiService.deleteBook(id).subscribe({
       next: () => {
         this._books.update((current) => current.filter((book) => book.id != id ));
         this._selectedBookIds.update((current) => {

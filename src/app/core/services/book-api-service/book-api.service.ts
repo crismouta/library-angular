@@ -1,0 +1,32 @@
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Book, CreateBookDto, UpdateBookDto } from '../../../features/books/models/book.model';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class BookApiService {
+  private readonly httpClient = inject(HttpClient);
+  private readonly apiUrl = 'http://localhost:3000/books';
+
+  getBooks(): Observable<Book[]> {
+    return this.httpClient.get<Book[]>(this.apiUrl);
+  }
+
+  getBookById(bookId: string): Observable<Book> {
+    return this.httpClient.get<Book>(`${this.apiUrl}/${bookId}`);
+  }
+
+  createBook(book: CreateBookDto): Observable<Book> {
+    return this.httpClient.post<Book>(this.apiUrl, book);
+  }
+
+  updateBook(book: UpdateBookDto): Observable<Book> {
+    return this.httpClient.put<Book>(`${this.apiUrl}/${book.id}`, book);
+  }
+
+  deleteBook(bookId: string): Observable<void> {
+    return this.httpClient.delete<void>(`${this.apiUrl}/${bookId}`);
+  }
+}

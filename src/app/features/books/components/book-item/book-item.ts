@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { Book } from '../../../../shared/models/book.model';
 import { RouterLink } from '@angular/router';
+import { Book } from '../../models/book.model';
 
 @Component({
   selector: 'app-book-item',

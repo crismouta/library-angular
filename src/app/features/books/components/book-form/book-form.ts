@@ -1,6 +1,6 @@
 import { Component, effect, inject, model, output, ChangeDetectionStrategy, input } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Book, CreateBookDto } from '../../../../shared/models/book.model';
+import { Book, CreateBookDto } from '../../models/book.model';
 
 type BookFormValue = CreateBookDto;
 
