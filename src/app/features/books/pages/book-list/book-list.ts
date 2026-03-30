@@ -1,46 +1,59 @@
-import { Component, inject } from '@angular/core';
-import { BookStoreService } from '../../../../core/services/book-store-service/books-store.service';
-import { BookForm } from '../../components/book-form/book-form';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { BookStoreService } from '../../../../core/services/book-store-service/book-store.service';
+import { ConfirmDialog } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { Router } from '@angular/router';
 import { BookItem } from '../../components/book-item/book-item';
-import { CreateBookDto } from '../../models/book.model';
 
 @Component({
   selector: 'app-book-list',
-  imports: [BookForm, BookItem],
+  imports: [BookItem, ConfirmDialog],
   templateUrl: './book-list.html',
   styleUrl: './book-list.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BookList {
-  private bookService = inject(BookStoreService);
+  readonly bookStore = inject(BookStoreService);
+  private readonly router = inject(Router);
 
-  readonly books = this.bookService.books;
-  readonly isLoading = this.bookService.isLoading;
-  readonly error = this.bookService.error;
-  readonly selectedBookIds = this.bookService.selectedBookIds;
-  readonly selectedCount = this.bookService.selectedCount;
+  readonly pendingDeleteBookId = signal<string | null>(null);
+  readonly isBulkDeleteDialogOpen = signal(false);
 
-  onAddBook(book: CreateBookDto): void {
-    this.bookService.addBook(book);
+  navigateToCreateBook(): void {
+    this.router.navigate(['/books/create']);
   }
 
-  onDeleteBook(id: string): void {
-    const confirmed = window.confirm('¿Seguro que quieres eliminar este libro?');
-    if (!confirmed) return;
-
-    this.bookService.deleteBook(id);
+  requestDeleteBook(bookId: string): void {
+    this.pendingDeleteBookId.set(bookId);
   }
 
-  onToggleSelection(id: string): void {
-    this.bookService.toggleBookSelection(id);
+  confirmDeleteBook(): void {
+    const bookId = this.pendingDeleteBookId();
+    if (!bookId) {
+      return;
+    }
+
+    this.bookStore.deleteBook(bookId);
+    this.pendingDeleteBookId.set(null);
   }
 
-  onDeleteSelected(): void {
-    const confirmed = window.confirm(
-      `¿Seguro que quieres eliminar ${this.selectedCount()} libro(s) seleccionado(s)?`
-    );
+  cancelDeleteBook(): void {
+    this.pendingDeleteBookId.set(null);
+  }
 
-    if (!confirmed) return;
+  onSelectionToggle(bookId: string): void {
+    this.bookStore.toggleBookSelection(bookId);
+  }
 
-    this.bookService.deleteSelectedBooks();
+  openBulkDeleteDialog(): void {
+    this.isBulkDeleteDialogOpen.set(true);
+  }
+
+  confirmBulkDelete(): void {
+    this.bookStore.deleteSelectedBooks();
+    this.isBulkDeleteDialogOpen.set(false);
+  }
+
+  cancelBulkDelete(): void {
+    this.isBulkDeleteDialogOpen.set(false);
   }
 }

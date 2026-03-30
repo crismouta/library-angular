@@ -1,29 +1,49 @@
-<h1>Book List</h1>
+<section class="page">
+    <header class="page-header">
+        <div>
+            <h1>Books</h1>
+            <p>Browse, select, and manage your collection.</p>
+        </div>
 
-@if (error()) {
-<p>{{ error() }}</p>
-}
+        <div class="actions">
+            <button type="button" class="primary-button" (click)="navigateToCreateBook()">
+                Create book
+            </button>
 
-@if (selectedCount() > 0) {
-<button type="button" (click)="onDeleteSelected()">
-    Eliminar seleccionados ({{ selectedCount() }})
-</button>
-}
+            @if (bookStore.hasSelectedBooks()) {
+            <button type="button" class="danger-button" (click)="openBulkDeleteDialog()">
+                Delete selected ({{ bookStore.selectedCount() }})
+            </button>
+            }
+        </div>
+    </header>
 
-@if (isLoading()) {
-<p>Cargando libros...</p>
-} @else {
-<ul>
-    @for (book of books(); track book.id) {
-    <app-book-item [book]="book" [isSelected]="selectedBookIds().has(book.id)" (deleteBook)="onDeleteBook($event)"
-        (toggleSelection)="onToggleSelection($event)" />
-    } @empty {
-    <p>No hay libros disponibles.</p>
+    @if (bookStore.error()) {
+    <p class="error-message">{{ bookStore.error() }}</p>
     }
-</ul>
+
+    @if (bookStore.isLoading()) {
+    <p>Loading books...</p>
+    } @else {
+    <ul class="book-list">
+        @for (book of bookStore.books(); track book.id) {
+        <app-book-item [book]="book" [isSelected]="bookStore.selectedBookIds().has(book.id)"
+            (deleteRequested)="requestDeleteBook(book.id)" (selectionToggled)="onSelectionToggle(book.id)" />
+        } @empty {
+        <p>No books available.</p>
+        }
+    </ul>
+    }
+</section>
+
+@if (pendingDeleteBookId()) {
+<app-confirm-dialog title="Delete book" message="Are you sure you want to delete this book?" confirmButtonText="Delete"
+    cancelButtonText="Cancel" (confirmed)="confirmDeleteBook()" (cancelled)="cancelDeleteBook()" />
 }
 
-<hr />
-
-<h2>Añadir libro</h2>
-<app-book-form submitLabel="Añadir libro" (formSubmit)="onAddBook($event)"></app-book-form>
+@if (isBulkDeleteDialogOpen()) {
+<app-confirm-dialog title="Delete selected books"
+    [message]="'Are you sure you want to delete ' + bookStore.selectedCount() + ' selected book(s)?'"
+    confirmButtonText="Delete all" cancelButtonText="Cancel" (confirmed)="confirmBulkDelete()"
+    (cancelled)="cancelBulkDelete()" />
+}

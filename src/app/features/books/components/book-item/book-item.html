@@ -1,6 +1,6 @@
 <li>
     <input type="checkbox" [checked]="isSelected()" (change)="onToggleSelection()"
-        [attr.aria-label]="'Seleccionar ' + book().title" />
+        [attr.aria-label]="'Select ' + book().title" />
 
     <a [routerLink]="['/books', book().id]">
         {{ book().title }}
@@ -8,5 +8,5 @@
 
     - {{ book().author }} - {{ book().category }}
 
-    <button type="button" (click)="onDeleteClick($event)">Eliminar</button>
+    <button type="button" (click)="onDeleteClick($event)">Delete</button>
 </li>

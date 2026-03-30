@@ -1,29 +1,29 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div>
-        <label for="title">Título</label>
+        <label for="title">Title</label>
         <input id="title" type="text" formControlName="title" />
         @if (form.controls.title.invalid && form.controls.title.touched) {
-        <small>El título es obligatorio (mínimo 2 caracteres).</small>
+        <small>Title is required and must have at least 2 characters.</small>
         }
     </div>
 
     <div>
-        <label for="author">Autor</label>
+        <label for="author">Author</label>
         <input id="author" type="text" formControlName="author" />
         @if (form.controls.author.invalid && form.controls.author.touched) {
-        <small>El autor es obligatorio (mínimo 2 caracteres).</small>
+        <small>Author is required and must have at least 2 characters.</small>
         }
     </div>
 
     <div>
-        <label for="category">Categoría</label>
+        <label for="category">Category</label>
         <input id="category" type="text" formControlName="category" />
         @if (form.controls.category.invalid && form.controls.category.touched) {
-        <small>La categoría es obligatoria (mínimo 2 caracteres).</small>
+        <small>Category is required and must have at least 2 characters.</small>
         }
     </div>
 
-    <button type="submit" [disabled]="form.invalid">
+    <button type="submit">
         {{ submitLabel() }}
     </button>
 </form>

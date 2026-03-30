@@ -2,8 +2,6 @@ import { Component, effect, inject, model, output, ChangeDetectionStrategy, inpu
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Book, CreateBookDto } from '../../models/book.model';
 
-type BookFormValue = CreateBookDto;
-
 @Component({
   selector: 'app-book-form',
   imports: [ReactiveFormsModule],
@@ -12,9 +10,8 @@ type BookFormValue = CreateBookDto;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BookForm {
-  readonly initialValue = input<Partial<Book> | null>(null);
   readonly submitLabel = input('Add book');
-  readonly formSubmit = output<BookFormValue>();
+  readonly formSubmit = output<CreateBookDto>();
   private readonly formBuilder = inject(NonNullableFormBuilder);
 
   readonly form = this.formBuilder.group({
@@ -22,25 +19,6 @@ export class BookForm {
     author: ['', [Validators.required, Validators.minLength(2)]],
     category: ['', [Validators.required, Validators.minLength(2)]],
   });
-
-  constructor() {
-    effect(() => {
-      const value = this.initialValue();
-      if (!value) {
-        this.form.reset({
-          title: '',
-          author: '',
-          category: '',
-        });
-        return;
-      }
-      this.form.patchValue({
-        title: value.title ?? '',
-        author: value.author ?? '',
-        category: value.category ?? '',
-      });
-    });
-  }
 
   onSubmit(): void {
     if (this.form.invalid) {

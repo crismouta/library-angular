@@ -1,0 +1,18 @@
+<section class="page">
+    <header class="page-header">
+        <div>
+            <h1>Create book</h1>
+            <p>Add a new book to your collection.</p>
+        </div>
+
+        <button type="button" class="secondary-button" (click)="navigateToBookList()">
+            Back to list
+        </button>
+    </header>
+
+    @if (bookStore.error()) {
+    <p class="error-message">{{ bookStore.error() }}</p>
+    }
+
+    <app-book-form submitLabel="Create book" (formSubmit)="onCreateBook($event)" />
+</section>

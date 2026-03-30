@@ -1,26 +1,98 @@
 @let currentBook = book();
 
-@if (currentBook) {
-<section>
-    <h2>{{ currentBook.title }}</h2>
-    <p><strong>Autor:</strong> {{ currentBook.author }}</p>
-    <p><strong>Categoría:</strong> {{ currentBook.category }}</p>
+<section class="page">
+    @if (currentBook) {
+    <header class="page-header">
+        <div>
+            <h1>Book details</h1>
+            <p>View and edit this book inline.</p>
+        </div>
 
-    <div>
-        <button type="button" (click)="onDelete()">Eliminar</button>
-        <button type="button" (click)="navigateToBookList()">Volver al listado</button>
-    </div>
+        <button type="button" class="secondary-button" (click)="navigateToBookList()">
+            Back to list
+        </button>
+    </header>
 
-    <hr />
+    @if (bookStore.error()) {
+    <p class="error-message">{{ bookStore.error() }}</p>
+    }
 
-    <h3>Editar libro</h3>
-    <app-book-form [initialValue]="currentBook" submitLabel="Guardar cambios"
-        (formSubmit)="onUpdateBook($event)"></app-book-form>
+    <section class="details-card">
+        <div class="field-row">
+            <label for="title">Title</label>
+
+            @if (isEditing()) {
+            <input id="title" type="text" [value]="draftTitle()"
+                (input)="updateDraftTitle($any($event.target).value)" />
+            } @else {
+            <p>{{ currentBook.title }}</p>
+            }
+        </div>
+
+        <div class="field-row">
+            <label for="author">Author</label>
+
+            @if (isEditing()) {
+            <input id="author" type="text" [value]="draftAuthor()"
+                (input)="updateDraftAuthor($any($event.target).value)" />
+            } @else {
+            <p>{{ currentBook.author }}</p>
+            }
+        </div>
+
+        <div class="field-row">
+            <label for="category">Category</label>
+
+            @if (isEditing()) {
+            <input id="category" type="text" [value]="draftCategory()"
+                (input)="updateDraftCategory($any($event.target).value)" />
+            } @else {
+            <p>{{ currentBook.category }}</p>
+            }
+        </div>
+
+        @if (isEditing() && (!draftTitle().trim() || !draftAuthor().trim() || !draftCategory().trim())) {
+        <p class="validation-message">All fields are required before saving.</p>
+        }
+
+        <div class="actions">
+            @if (!isEditing()) {
+            <button type="button" class="primary-button" (click)="startEditing()">
+                Edit inline
+            </button>
+            } @else {
+            <button type="button" class="secondary-button" (click)="cancelEditing()">
+                Cancel editing
+            </button>
+
+            <button type="button" class="primary-button" (click)="requestSaveChanges()">
+                Save changes
+            </button>
+            }
+
+            <button type="button" class="danger-button" (click)="requestDelete()">
+                Delete book
+            </button>
+        </div>
+    </section>
+    } @else {
+    <section class="details-card">
+        <h2>Book not found</h2>
+        <p>No book exists with ID "{{ bookId() }}".</p>
+
+        <button type="button" class="secondary-button" (click)="navigateToBookList()">
+            Back to list
+        </button>
+    </section>
+    }
 </section>
-} @else {
-<section>
-    <h2>Error 404</h2>
-    <p>No existe ningún libro con ID "{{ bookId() }}".</p>
-    <button type="button" (click)="navigateToBookList()">Volver al listado</button>
-</section>
+
+@if (isSaveDialogOpen()) {
+<app-confirm-dialog title="Save changes" message="Do you want to save your inline edits?" confirmButtonText="Save"
+    cancelButtonText="Keep editing" (confirmed)="confirmSaveChanges()" (cancelled)="cancelSaveChanges()" />
+}
+
+@if (isDeleteDialogOpen()) {
+<app-confirm-dialog title="Delete book" message="Are you sure you want to delete this book?" confirmButtonText="Delete"
+    cancelButtonText="Cancel" (confirmed)="confirmDelete()" (cancelled)="cancelDelete()" />
 }

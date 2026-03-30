@@ -1,6 +1,32 @@
-li {
-    display: flex;
+.book-item {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr 1fr auto;
     gap: 0.75rem;
     align-items: center;
-    margin-bottom: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.book-link {
+    font-weight: 600;
+    color: #111827;
+    text-decoration: none;
+}
+
+.book-link:hover {
+    text-decoration: underline;
+}
+
+.book-meta {
+    color: #6b7280;
+}
+
+.delete-button {
+    border: none;
+    border-radius: 8px;
+    background: #ef4444;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    font: inherit;
 }
