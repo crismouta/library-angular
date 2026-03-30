@@ -1,6 +1,6 @@
 <h1>Welcome to the book list</h1>
 <ul>
-    @for (book of books; track book.id) {
+    @for (book of books(); track book.id) {
     <li>
         <a [routerLink]="['/books', book.id]">
             {{ book.title }}
@@ -8,5 +8,7 @@
         - {{book.author}}
         - {{book.category}}
     </li>
+    } @empty {
+    <p>No hay libros disponibles o cargando...</p>
     }
 </ul>

@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Book } from '../intefaces/book';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BooksService {
-  books: Book[] = [
+  /* books: Book[] = [
     {
       id: '1',
       title: 'Title 1',
@@ -32,5 +33,20 @@ export class BooksService {
 
   getById(id: string): Book | undefined {
     return this.books.find(book => book.id === id);
+  } */
+  private http = inject(HttpClient);
+  private readonly API_URL = 'http://localhost:3000/books';
+
+  getBooks() {
+    return this.http.get<Book[]>(this.API_URL);
   }
+
+  getById(id: string) {
+    return this.http.get<Book>(`${this.API_URL}/${id}`);
+  }
+
+  delete(id: string) {
+    return this.http.delete<unknown>(`${this.API_URL}/${id}`);
+  }
+
 }

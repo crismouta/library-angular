@@ -5,8 +5,7 @@
     <h2>Book title: {{ bookData.title }}</h2>
     <p>Book author: {{ bookData.author }}</p>
     <p>Book category: {{ bookData.category }}</p>
-
-
+    <button (click)="onDelete()">Delete</button>
 </div>
 } @else {
 <div class="error">
