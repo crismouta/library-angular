@@ -13,10 +13,22 @@
       "category": "Distopia"
     },
     {
+      "id": "3",
+      "title": "Cien años de soledad",
+      "author": "Gabriel García Márquez",
+      "category": "Realismo Mágico"
+    },
+    {
       "id": "4",
       "title": "Don Quijote de la Mancha",
       "author": "Miguel de Cervantes",
       "category": "Clásico"
+    },
+    {
+      "id": "7gB1o_kydqg",
+      "title": "updated 2",
+      "author": "uodates",
+      "category": "fdghgfh"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

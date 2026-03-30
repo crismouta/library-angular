@@ -16,3 +16,13 @@
 }
 
 <button (click)="navigateToBookList()">Back to Book List</button>
+
+<hr>
+@if (book()) {
+<form (submit)="updateBook(title.value, author.value, category.value); $event.preventDefault()">
+    <input #title [value]="book()?.title" />
+    <input #author [value]="book()?.author" />
+    <input #category [value]="book()?.category" />
+    <button type="submit">Update</button>
+</form>
+}

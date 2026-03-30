@@ -12,3 +12,12 @@
     <p>No hay libros disponibles o cargando...</p>
     }
 </ul>
+<hr>
+<h2>Add Book</h2>
+
+<form (submit)="addBook(title.value, author.value, category.value); $event.preventDefault()">
+    <input #title placeholder="Title" required />
+    <input #author placeholder="Author" required />
+    <input #category placeholder="Category" required />
+    <button type="submit">Add</button>
+</form>

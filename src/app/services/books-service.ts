@@ -39,14 +39,22 @@ export class BooksService {
 
   getBooks() {
     return this.http.get<Book[]>(this.API_URL);
-  }
+  };
 
   getById(id: string) {
     return this.http.get<Book>(`${this.API_URL}/${id}`);
-  }
+  };
 
   delete(id: string) {
     return this.http.delete<unknown>(`${this.API_URL}/${id}`);
+  };
+
+  addBook(book: Omit<Book, 'id'>) {
+    return this.http.post<Book>(this.API_URL, book);
+  };
+
+  updateBook(book: Book) {
+    return this.http.put<Book>(`${this.API_URL}/${book.id}`, book);
   }
 
 }

@@ -19,13 +19,21 @@ export class BookList {
     this.refreshTrigger.pipe(
       startWith(null), // Para que cargue la primera vez
       switchMap(() => this.booksService.getBooks())
-    ), 
+    ),
     { initialValue: [] }
   );
 
   deleteBook(id: string) {
     this.booksService.delete(id).subscribe(() => {
       this.refreshTrigger.next(); // Esto refresca el signal 'books'
+    });
+  };
+
+  addBook(title: string, author: string, category: string) {
+    const newBook = { title, author, category };
+
+    this.booksService.addBook(newBook).subscribe(() => {
+      this.refreshTrigger.next(); // 🔥 refresca lista
     });
   }
 }
