@@ -1,8 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { Layout } from './layout/layout';
-import { Navbar } from './layout/components/navbar/navbar';
-import { Footer } from './layout/components/footer/footer';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -11,5 +8,5 @@ import { Footer } from './layout/components/footer/footer';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('book-app');
+  
 }

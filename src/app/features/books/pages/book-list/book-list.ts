@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { BooksService } from '../../../../core/services/book-store-service/books-store.service';
 import { BookForm } from '../../components/book-form/book-form';
 import { BookItem } from '../../components/book-item/book-item';
