@@ -13,16 +13,14 @@ export class BookItem {
   readonly book = input.required<Book>();
   readonly isSelected = input(false);
 
-  readonly deleteBook = output<string>();
-  readonly toggleSelection = output<string>();
+  readonly deleteRequested = output<void>();
+  readonly selectionToggled = output<void>();
 
-  onDeleteClick(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    this.deleteBook.emit(this.book().id);
+  onDeleteClick(): void {
+    this.deleteRequested.emit();
   }
 
-  onToggleSelection(): void {
-    this.toggleSelection.emit(this.book().id);
+  onSelectionChange(): void {
+    this.selectionToggled.emit();
   }
 }
