@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { BooksService } from '../../../../core/services/book-store-service/books-store.service';
+import { BookStoreService } from '../../../../core/services/book-store-service/books-store.service';
 import { BookForm } from '../../components/book-form/book-form';
 import { BookItem } from '../../components/book-item/book-item';
 import { CreateBookDto } from '../../models/book.model';
@@ -11,7 +11,7 @@ import { CreateBookDto } from '../../models/book.model';
   styleUrl: './book-list.css',
 })
 export class BookList {
-  private bookService = inject(BooksService);
+  private bookService = inject(BookStoreService);
 
   readonly books = this.bookService.books;
   readonly isLoading = this.bookService.isLoading;

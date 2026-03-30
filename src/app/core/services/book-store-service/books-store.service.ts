@@ -6,7 +6,7 @@ import { BookApiService } from '../book-api-service/book-api.service';
 @Injectable({
   providedIn: 'root',
 })
-export class BooksService {
+export class BookStoreService {
   private readonly bookApiService = inject(BookApiService);
 
   private readonly _books = signal<Book[]>([]);

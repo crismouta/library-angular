@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BooksService } from '../../../../core/services/book-store-service/books-store.service';
+import { BookStoreService } from '../../../../core/services/book-store-service/books-store.service';
 import { BookForm } from '../../components/book-form/book-form';
 import { Book, CreateBookDto } from '../../models/book.model';
 
@@ -11,7 +11,7 @@ import { Book, CreateBookDto } from '../../models/book.model';
   styleUrl: './book-details.css',
 })
 export class BookDetails {
-  private readonly bookService = inject(BooksService);
+  private readonly bookService = inject(BookStoreService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 

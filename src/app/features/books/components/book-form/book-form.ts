@@ -16,8 +16,6 @@ export class BookForm {
   readonly submitLabel = input('Add book');
   readonly formSubmit = output<BookFormValue>();
   private readonly formBuilder = inject(NonNullableFormBuilder);
-  book = model<Book | null>(null);
-  save = output<Omit<Book, 'id'>>();
 
   readonly form = this.formBuilder.group({
     title: ['', [Validators.required, Validators.minLength(2)]],
