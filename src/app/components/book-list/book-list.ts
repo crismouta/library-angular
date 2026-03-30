@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { BooksService } from '../../services/books-service';
 import { RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { startWith, Subject, switchMap } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-book-list',
@@ -12,12 +12,10 @@ import { startWith, Subject, switchMap } from 'rxjs';
 })
 export class BookList {
   private booksService = inject(BooksService);
-  private refreshTrigger = new Subject<void>();
+  private refresh = signal(0);
 
-  //books = toSignal(this.booksService.getBooks(), { initialValue: [] });
   books = toSignal(
-    this.refreshTrigger.pipe(
-      startWith(null), // Para que cargue la primera vez
+    toObservable(this.refresh).pipe(
       switchMap(() => this.booksService.getBooks())
     ),
     { initialValue: [] }
@@ -25,7 +23,7 @@ export class BookList {
 
   deleteBook(id: string) {
     this.booksService.delete(id).subscribe(() => {
-      this.refreshTrigger.next(); // Esto refresca el signal 'books'
+      this.refresh.update(v => v + 1);
     });
   };
 
@@ -33,7 +31,7 @@ export class BookList {
     const newBook = { title, author, category };
 
     this.booksService.addBook(newBook).subscribe(() => {
-      this.refreshTrigger.next(); // 🔥 refresca lista
+      this.refresh.update(v => v + 1);
     });
   }
 }

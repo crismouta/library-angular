@@ -1,8 +1,8 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { BooksService } from '../../services/books-service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, of, Subject, switchMap, startWith, combineLatest } from 'rxjs';
+import { catchError, of, switchMap, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-book-details',
@@ -13,25 +13,14 @@ import { catchError, of, Subject, switchMap, startWith, combineLatest } from 'rx
 export class BookDetails {
   private bookService = inject(BooksService);
   private router = inject(Router);
-  private refreshTrigger = new Subject<void>();
+  private refresh = signal(0);
 
-  // El nombre del input debe coincidir con el nombre en la ruta (':id')
   bookId = input.required<string>();
 
-  // Reacciona automáticamente cuando el ID cambia en la URL
-  //book = computed(() => this.bookService.getById(this.bookId()));
-  /*  book = toSignal(
-     toObservable(this.bookId).pipe(
-       switchMap(id => this.bookService.getById(id).pipe(
-         catchError(() => of(null)) // Si hay error (404), devolvemos null para mostrar el @else
-       ))
-     )
-   ); */
-
-  book = toSignal(
+    book = toSignal(
     combineLatest([
       toObservable(this.bookId),
-      this.refreshTrigger.pipe(startWith(null))
+      toObservable(this.refresh)
     ]).pipe(
       switchMap(([id]) =>
         this.bookService.getById(id).pipe(
@@ -49,7 +38,7 @@ export class BookDetails {
     this.bookService.delete(id).subscribe({
       next: () => {
         console.log('Libro borrado');
-        this.navigateToBookList(); // Volvemos a la lista, que se cargará fresca
+        this.navigateToBookList();
       },
       error: (error) => console.error('Error al borrar', error)
     });
@@ -68,8 +57,7 @@ export class BookDetails {
     };
 
     this.bookService.updateBook(updatedBook).subscribe(() => {
-      this.refreshTrigger.next();
-      console.log('Libro actualizado');
+      this.refresh.update(v => v + 1);
     });
   }
 }
