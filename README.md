@@ -1,59 +1,102 @@
-# BookApp
+# Book App (Angular 21 + JSON Server)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.1.
+A simple CRUD application built with **Angular 21** using **standalone components**, **signals**, **modern template control flow** (`@if`, `@for`, `@let`), and a small in-memory backend powered by **json-server**.
 
-## Development server
+This project is designed as a learning example to demonstrate:
 
-To start a local development server, run:
+- Angular 21 modern project structure
+- API service vs Store service separation
+- Signals for local state management
+- Reactive Forms
+- Routing with `withComponentInputBinding()`
+- Reusable presentational components
+- Clean CRUD flow (list, details, create, update, delete)
+
+---
+
+## Tech stack
+
+- Angular 21
+- TypeScript
+- RxJS
+- Reactive Forms
+- JSON Server (fake REST API)
+
+---
+
+## Features
+
+- View all books
+- View book details
+- Create a new book
+- Edit a book inline
+- Delete a single book
+- Bulk delete selected books
+- Confirmation dialog before destructive actions
+
+---
+
+## Project architecture
+
+This project follows a simple and clean separation of responsibilities:
+
+### `BookApiService`
+
+Responsible only for HTTP communication with the backend.
+
+### `BookStoreService`
+
+Responsible for UI state and business flow:
+
+- books list
+- loading state
+- error state
+- selected books
+- local state updates after API responses
+
+### Feature components
+
+- `BookList`
+- `BookDetails`
+- `BookCreate`
+- `BookForm`
+- `BookItem`
+
+### Shared components
+
+- `ConfirmDialog`
+
+---
+
+## Run the project
+
+This project requires **two terminals** running at the same time:
+
+### 1. Start the fake backend with JSON Server
+
+```bash
+json-server --watch db.json --port 3000
+```
+
+The API will be available at:
+
+```bash
+http://localhost:3000/books
+```
+
+### 2. Start the Angular application
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Then open:
 
 ```bash
-ng generate component component-name
+http://localhost:4200
 ```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Notes
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This project is intended as a learning CRUD example for practicing modern Angular 21 patterns without using NgRx, while still keeping a clear store-like architecture.
