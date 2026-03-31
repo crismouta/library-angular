@@ -74,7 +74,9 @@ export class BookDetails {
   }
 
   requestSaveChanges(): void {
-    this.isSaveDialogOpen.set(true);
+    if (this.isDraftBookValid()) {
+      this.isSaveDialogOpen.set(true);
+    }
   }
 
   confirmSaveChanges(): void {
@@ -106,10 +108,12 @@ export class BookDetails {
 
   confirmDelete(): void {
     const currentBook = this.book();
+
     if (currentBook) {
-      this.bookStore.deleteBook(currentBook.id);
-      this.isDeleteDialogOpen.set(false);
-      this.navigateToBookList();
+      this.bookStore.deleteBook(currentBook.id, () => {
+        this.isDeleteDialogOpen.set(false);
+        this.navigateToBookList();
+      });
     }
   }
 

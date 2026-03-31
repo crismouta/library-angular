@@ -14,16 +14,24 @@
     <div>
         <label for="author">Author</label>
         <input id="author" type="text" formControlName="author" />
-        @if (form.controls.author.invalid && form.controls.author.touched) {
-        <small>Author is required and must have at least 2 characters.</small>
+        @if (form.controls.author.touched && form.controls.author.errors?.['required']) {
+        <small>Author is required.</small>
+        }
+
+        @if (form.controls.author.touched && form.controls.author.errors?.['minlength']) {
+        <small>Author must have at least 2 characters.</small>
         }
     </div>
 
     <div>
         <label for="category">Category</label>
         <input id="category" type="text" formControlName="category" />
-        @if (form.controls.category.invalid && form.controls.category.touched) {
-        <small>Category is required and must have at least 2 characters.</small>
+        @if (form.controls.category.touched && form.controls.category.errors?.['required']) {
+        <small>Category is required.</small>
+        }
+
+        @if (form.controls.category.touched && form.controls.category.errors?.['minlength']) {
+        <small>Category must have at least 2 characters.</small>
         }
     </div>
 

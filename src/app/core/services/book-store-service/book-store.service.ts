@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Book, CreateBookDto, UpdateBookDto } from '../../../features/books/models/book.model';
 import { BookApiService } from '../book-api-service/book-api.service';
-import { catchError, finalize, Observable, tap, throwError } from 'rxjs';
+import { finalize } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -118,7 +118,7 @@ export class BookStoreService {
     })
   }
 
-  deleteBook(id: string): void {
+  deleteBook(id: string, onSuccess?: () => void): void {
     this._error.set(null);
 
     this.bookApiService.deleteBook(id).subscribe({
@@ -128,12 +128,14 @@ export class BookStoreService {
           const next = new Set(current);
           next.delete(id);
           return next;
-        })
+        });
+
+        onSuccess?.();
       },
       error: () => {
         this._error.set('Could not delete the book');
       }
-    })
+    });
   }
 
   toggleBookSelection(id: string): void {
