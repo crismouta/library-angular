@@ -1,0 +1,100 @@
+@let currentBook = book();
+
+<section class="page">
+    @if (currentBook) {
+    <header class="page-header">
+        <div>
+            <h1>Book details</h1>
+            <p>View and edit this book inline.</p>
+        </div>
+
+        <button type="button" class="secondary-button" (click)="navigateToBookList()">
+            Back to list
+        </button>
+    </header>
+
+    @if (bookStore.error()) {
+    <p class="error-message">{{ bookStore.error() }}</p>
+    }
+
+    <section class="details-card">
+        <div class="field-row">
+            <label for="title">Title</label>
+
+            @if (isEditing()) {
+            <input id="title" type="text" [value]="draftBook().title" (input)="updateDraftField('title', $event)" />
+            } @else {
+            <p>{{ currentBook.title }}</p>
+            }
+        </div>
+
+        <div class="field-row">
+            <label for="author">Author</label>
+
+            @if (isEditing()) {
+            <input id="author" type="text" [value]="draftBook().author" (input)="updateDraftField('author', $event)" />
+            } @else {
+            <p>{{ currentBook.author }}</p>
+            }
+        </div>
+
+        <div class="field-row">
+            <label for="category">Category</label>
+
+            @if (isEditing()) {
+            <input id="category" type="text" [value]="draftBook().category"
+                (input)="updateDraftField('category', $event)" />
+            } @else {
+            <p>{{ currentBook.category }}</p>
+            }
+        </div>
+
+        @if (isEditing() && !isDraftBookValid()) {
+        <p class="validation-message">All fields are required before saving.</p>
+        }
+
+        <div class="actions">
+            @if (!isEditing()) {
+            <button type="button" class="primary-button" (click)="startEditing()">
+                Edit inline
+            </button>
+            } @else {
+            <button type="button" class="secondary-button" (click)="cancelEditing()">
+                Cancel editing
+            </button>
+
+            <button type="button" class="primary-button" (click)="requestSaveChanges()" [disabled]="!isDraftBookValid()">
+                Save changes
+            </button>
+            }
+
+            <button type="button" class="danger-button" (click)="requestDelete()">
+                Delete book
+            </button>
+        </div>
+    </section>
+    } @else if (bookStore.isLoading()) {
+    <section class="details-card">
+        <p>Loading book details...</p>
+    </section>
+    } @else {
+    <section class="details-card">
+        <h2>Book not found</h2>
+        <p>No book exists with ID "{{ bookId() }}".</p>
+
+        <button type="button" class="secondary-button" (click)="navigateToBookList()">
+            Back to list
+        </button>
+    </section>
+    }
+</section>
+
+@if (isSaveDialogOpen()) {
+<app-confirm-dialog title="Save changes" message="Do you want to save your inline edits?" confirmButtonText="Save"
+    cancelButtonText="Keep editing" (confirmed)="confirmSaveChanges()" (cancelled)="cancelSaveChanges()" />
+}
+
+@if (isDeleteDialogOpen()) {
+<app-confirm-dialog title="Delete book" message="Are you sure you want to delete this book?" confirmButtonText="Delete"
+    cancelButtonText="Cancel" (confirmed)="confirmDelete()" (cancelled)="cancelDelete()" />
+}

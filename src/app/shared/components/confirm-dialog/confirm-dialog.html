@@ -1,0 +1,16 @@
+<section class="backdrop" (click)="onCancel()">
+    <div class="dialog" (click)="$event.stopPropagation()">
+        <h3>{{ title() }}</h3>
+        <p>{{ message() }}</p>
+
+        <div class="actions">
+            <button type="button" class="secondary-button" (click)="onCancel()">
+                {{ cancelButtonText() }}
+            </button>
+
+            <button type="button" class="primary-button" (click)="onConfirm()">
+                {{ confirmButtonText() }}
+            </button>
+        </div>
+    </div>
+</section>

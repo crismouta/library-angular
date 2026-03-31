@@ -1,0 +1,37 @@
+form {
+    display: grid;
+    gap: 1rem;
+    max-width: 420px;
+}
+
+div {
+    display: grid;
+    gap: 0.25rem;
+}
+
+label {
+    font-weight: 600;
+    color: #111827;
+}
+
+input {
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font: inherit;
+}
+
+small {
+    color: #dc2626;
+}
+
+button {
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    background: #111827;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    font: inherit;
+}

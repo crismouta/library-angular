@@ -1,0 +1,49 @@
+<section class="page">
+    <header class="page-header">
+        <div>
+            <h1>Books</h1>
+            <p>Browse, select, and manage your collection.</p>
+        </div>
+
+        <div class="actions">
+            <button type="button" class="primary-button" (click)="navigateToCreateBook()">
+                Create book
+            </button>
+
+            @if (bookStore.hasSelectedBooks()) {
+            <button type="button" class="danger-button" (click)="openBulkDeleteDialog()">
+                Delete selected ({{ bookStore.selectedCount() }})
+            </button>
+            }
+        </div>
+    </header>
+
+    @if (bookStore.error()) {
+    <p class="error-message">{{ bookStore.error() }}</p>
+    }
+
+    @if (bookStore.isLoading()) {
+    <p>Loading books...</p>
+    } @else {
+    <ul class="book-list">
+        @for (book of bookStore.books(); track book.id) {
+        <app-book-item [book]="book" [isSelected]="bookStore.isBookSelected(book.id)"
+            (deleteRequested)="requestDeleteBook(book.id)" (selectionToggled)="onSelectionToggle(book.id)" />
+        } @empty {
+        <p>No books available.</p>
+        }
+    </ul>
+    }
+</section>
+
+@if (pendingDeleteBookId()) {
+<app-confirm-dialog title="Delete book" message="Are you sure you want to delete this book?" confirmButtonText="Delete"
+    cancelButtonText="Cancel" (confirmed)="confirmDeleteBook()" (cancelled)="cancelDeleteBook()" />
+}
+
+@if (isBulkDeleteDialogOpen()) {
+<app-confirm-dialog title="Delete selected books"
+    [message]="'Are you sure you want to delete ' + bookStore.selectedCount() + ' selected book(s)?'"
+    confirmButtonText="Delete all" cancelButtonText="Cancel" (confirmed)="confirmBulkDelete()"
+    (cancelled)="cancelBulkDelete()" />
+}

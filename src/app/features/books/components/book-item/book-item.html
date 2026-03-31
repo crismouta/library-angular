@@ -1,0 +1,15 @@
+<li class="book-item">
+    <input type="checkbox" [checked]="isSelected()" (change)="onSelectionChange()"
+        [attr.aria-label]="'Select ' + book().title" />
+
+    <a [routerLink]="['/books', book().id]" class="book-link">
+        {{ book().title }}
+    </a>
+
+    <span class="book-meta">{{ book().author }}</span>
+    <span class="book-meta">{{ book().category }}</span>
+
+    <button type="button" class="delete-button" (click)="onDeleteClick()" [attr.aria-label]="'Delete ' + book().title">
+        Delete
+    </button>
+</li>
