@@ -16,8 +16,9 @@ export class BookCreate {
 
 
   onCreateBook(book: CreateBookDto): void {
-    this.bookStore.addBook(book);
-    this.router.navigate(['/books']);
+    this.bookStore.addBook(book, () => {
+      this.router.navigate(['/books']);
+    });
   }
 
   navigateToBookList(): void {

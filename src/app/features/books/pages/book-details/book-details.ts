@@ -1,7 +1,7 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { BookStoreService } from '../../../../core/services/book-store-service/book-store.service';
-import { Book, CreateBookDto } from '../../models/book.model';
+import { UpdateBookDto } from '../../models/book.model';
 import { ConfirmDialog } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
@@ -12,19 +12,34 @@ import { ConfirmDialog } from '../../../../shared/components/confirm-dialog/conf
 })
 export class BookDetails {
   readonly bookStore = inject(BookStoreService);
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
-  readonly bookId = computed(() => this.route.snapshot.paramMap.get('bookId') ?? '');
-  readonly book = computed(() => this.bookStore.getBookById(this.bookId()) ?? null);
+  readonly bookId = input.required<string>();
+  readonly book = computed(() => this.bookStore.findBookById(this.bookId()) ?? null);
 
   readonly isEditing = signal(false);
   readonly isDeleteDialogOpen = signal(false);
   readonly isSaveDialogOpen = signal(false);
 
-  readonly draftTitle = signal('');
-  readonly draftAuthor = signal('');
-  readonly draftCategory = signal('');
+  constructor() {
+    effect(() => {
+      this.bookStore.ensureBookLoaded(this.bookId());
+    });
+  }
+
+  readonly draftBook = signal<UpdateBookDto>({
+    title: '',
+    author: '',
+    category: '',
+  });
+
+  readonly isDraftBookValid = computed(() => {
+    const currentDraft = this.draftBook();
+
+    return !!currentDraft.title.trim()
+      && !!currentDraft.author.trim()
+      && !!currentDraft.category.trim();
+  });
 
   navigateToBookList(): void {
     this.router.navigate(['/books']);
@@ -36,37 +51,29 @@ export class BookDetails {
       return;
     }
 
-    this.draftTitle.set(currentBook.title);
-    this.draftAuthor.set(currentBook.author);
-    this.draftCategory.set(currentBook.category);
+    this.draftBook.set({
+      title: currentBook.title,
+      author: currentBook.author,
+      category: currentBook.category,
+    });
+
     this.isEditing.set(true);
+  }
+
+  updateDraftField(field: keyof UpdateBookDto, event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+
+    this.draftBook.update((current) => ({
+      ...current,
+      [field]: value,
+    }));
   }
 
   cancelEditing(): void {
     this.isEditing.set(false);
   }
 
-  updateDraftTitle(value: string): void {
-    this.draftTitle.set(value);
-  }
-
-  updateDraftAuthor(value: string): void {
-    this.draftAuthor.set(value);
-  }
-
-  updateDraftCategory(value: string): void {
-    this.draftCategory.set(value);
-  }
-
   requestSaveChanges(): void {
-    const title = this.draftTitle().trim();
-    const author = this.draftAuthor().trim();
-    const category = this.draftCategory().trim();
-
-    if (!title || !author || !category) {
-      return;
-    }
-
     this.isSaveDialogOpen.set(true);
   }
 
@@ -76,14 +83,15 @@ export class BookDetails {
       return;
     }
 
-    const updatedBook: Book = {
-      id: currentBook.id,
-      title: this.draftTitle().trim(),
-      author: this.draftAuthor().trim(),
-      category: this.draftCategory().trim(),
+    const currentDraft = this.draftBook();
+
+    const updatedBook: UpdateBookDto = {
+      title: currentDraft.title.trim(),
+      author: currentDraft.author.trim(),
+      category: currentDraft.category.trim(),
     };
 
-    this.bookStore.updateBook(updatedBook);
+    this.bookStore.updateBook(currentBook.id, updatedBook);
     this.isSaveDialogOpen.set(false);
     this.isEditing.set(false);
   }
@@ -98,13 +106,11 @@ export class BookDetails {
 
   confirmDelete(): void {
     const currentBook = this.book();
-    if (!currentBook) {
-      return;
+    if (currentBook) {
+      this.bookStore.deleteBook(currentBook.id);
+      this.isDeleteDialogOpen.set(false);
+      this.navigateToBookList();
     }
-
-    this.bookStore.deleteBook(currentBook.id);
-    this.isDeleteDialogOpen.set(false);
-    this.navigateToBookList();
   }
 
   cancelDelete(): void {

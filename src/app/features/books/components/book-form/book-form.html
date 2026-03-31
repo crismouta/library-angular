@@ -2,8 +2,12 @@
     <div>
         <label for="title">Title</label>
         <input id="title" type="text" formControlName="title" />
-        @if (form.controls.title.invalid && form.controls.title.touched) {
-        <small>Title is required and must have at least 2 characters.</small>
+        @if (form.controls.title.touched && form.controls.title.errors?.['required']) {
+        <small>Title is required.</small>
+        }
+
+        @if (form.controls.title.touched && form.controls.title.errors?.['minlength']) {
+        <small>Title must have at least 2 characters.</small>
         }
     </div>
 
@@ -23,7 +27,7 @@
         }
     </div>
 
-    <button type="submit">
+    <button type="submit" [disabled]="form.invalid">
         {{ submitLabel() }}
     </button>
 </form>

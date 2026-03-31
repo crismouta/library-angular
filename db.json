@@ -24,6 +24,5 @@
       "author": "Miguel de Cervantes",
       "category": "Clásico"
     }
-  ],
-  "$schema": "./node_modules/json-server/schema.json"
+  ]
 }

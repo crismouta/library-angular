@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Book, CreateBookDto, UpdateBookDto } from '../../../features/books/models/book.model';
 import { BookApiService } from '../book-api-service/book-api.service';
+import { catchError, finalize, Observable, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -24,54 +24,96 @@ export class BookStoreService {
   readonly selectedCount = computed(() => this._selectedBookIds().size);
   readonly hasSelectedBooks = computed(() => this.selectedCount() > 0);
 
-  constructor() {
+  init(): void {
     this.loadBooks();
   }
 
-  getBookById (id: string): Book | undefined {
+  findBookById(id: string): Book | undefined {
     return this._books().find((book) => book.id === id);
   }
 
-  loadBooks(): void {
-    this._isLoading.set(true);
-    this._error.set(null);
-
-    this.bookApiService.getBooks().subscribe({
-      next: (books) => {
-        this._books.set(books);
-        this._isLoading.set(false);
-      },
-      error: () => {
-        this._error.set('Failed to load books.');
-        this._isLoading.set(false);
-      }
-    })
+  isBookSelected(id: string): boolean {
+    return this._selectedBookIds().has(id);
   }
 
-  addBook(book: CreateBookDto): void {
+  loadBooks(): void {
+    this.startLoading();
+
+    this.bookApiService
+      .getBooks()
+      .pipe(finalize(() => this.finishLoading()))
+      .subscribe({
+        next: (books) => this._books.set(books),
+        error: () => this._error.set('Failed to load books.'),
+      });
+  }
+
+  ensureBookLoaded(id: string): void {
+    if (this.hasBook(id)) {
+      return;
+    }
+
+    this.startLoading();
+
+    this.bookApiService
+      .getBookById(id)
+      .pipe(finalize(() => this.finishLoading()))
+      .subscribe({
+        next: (book) => this.upsertBook(book),
+        error: () => this.setLoadBookError(),
+      });
+  }
+
+  private hasBook(id: string): boolean {
+    return this.findBookById(id) !== undefined;
+  }
+
+  private startLoading(): void {
+    this._isLoading.set(true);
+    this._error.set(null);
+  }
+
+  private finishLoading(): void {
+    this._isLoading.set(false);
+  }
+
+  private upsertBook(book: Book): void {
+    this._books.update((current) => {
+      const alreadyExists = current.some((item) => item.id === book.id);
+
+      if (alreadyExists) {
+        return current.map((item) => (item.id === book.id ? book : item));
+      }
+
+      return [...current, book];
+    });
+  }
+
+  private setLoadBookError(): void {
+    this._error.set('Failed to load the book.');
+  }
+
+  addBook(book: CreateBookDto, onSuccess?: () => void): void {
     this._error.set(null);
 
     this.bookApiService.createBook(book).subscribe({
       next: (createdBook) => {
-        this._books.update((current) => [...current, createdBook])
+        this.upsertBook(createdBook);
+        onSuccess?.();
       },
       error: () => {
-        this._error.set('Cound not add the book');
+        this._error.set('Could not add the book');
       }
-    })
+    });
   }
 
-  updateBook(book: UpdateBookDto): void {
+  updateBook(bookId: string, book: UpdateBookDto): void {
     this._error.set(null);
 
-    this.bookApiService.updateBook(book).subscribe({
-      next: (updateBook) => {
-        this._books.update((current) => 
-          current.map((item) => (item.id === updateBook.id ? updateBook : item))
-        )
-      },
+    this.bookApiService.updateBook(bookId, book).subscribe({
+      next: (updatedBook) => this.upsertBook(updatedBook),
       error: () => {
-        this._error.set('Cound not update the book');
+        this._error.set('Could not update the book');
       }
     })
   }
@@ -81,7 +123,7 @@ export class BookStoreService {
 
     this.bookApiService.deleteBook(id).subscribe({
       next: () => {
-        this._books.update((current) => current.filter((book) => book.id != id ));
+        this._books.update((current) => current.filter((book) => book.id !== id));
         this._selectedBookIds.update((current) => {
           const next = new Set(current);
           next.delete(id);
@@ -89,7 +131,7 @@ export class BookStoreService {
         })
       },
       error: () => {
-        this._error.set('Cound not delete the book');
+        this._error.set('Could not delete the book');
       }
     })
   }

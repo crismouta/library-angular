@@ -1,6 +1,6 @@
-import { Component, effect, inject, model, output, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, inject, output, ChangeDetectionStrategy, input } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Book, CreateBookDto } from '../../models/book.model';
+import { CreateBookDto } from '../../models/book.model';
 
 @Component({
   selector: 'app-book-form',

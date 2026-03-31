@@ -22,8 +22,7 @@
             <label for="title">Title</label>
 
             @if (isEditing()) {
-            <input id="title" type="text" [value]="draftTitle()"
-                (input)="updateDraftTitle($any($event.target).value)" />
+            <input id="title" type="text" [value]="draftBook().title" (input)="updateDraftField('title', $event)" />
             } @else {
             <p>{{ currentBook.title }}</p>
             }
@@ -33,8 +32,7 @@
             <label for="author">Author</label>
 
             @if (isEditing()) {
-            <input id="author" type="text" [value]="draftAuthor()"
-                (input)="updateDraftAuthor($any($event.target).value)" />
+            <input id="author" type="text" [value]="draftBook().author" (input)="updateDraftField('author', $event)" />
             } @else {
             <p>{{ currentBook.author }}</p>
             }
@@ -44,14 +42,14 @@
             <label for="category">Category</label>
 
             @if (isEditing()) {
-            <input id="category" type="text" [value]="draftCategory()"
-                (input)="updateDraftCategory($any($event.target).value)" />
+            <input id="category" type="text" [value]="draftBook().category"
+                (input)="updateDraftField('category', $event)" />
             } @else {
             <p>{{ currentBook.category }}</p>
             }
         </div>
 
-        @if (isEditing() && (!draftTitle().trim() || !draftAuthor().trim() || !draftCategory().trim())) {
+        @if (isEditing() && !isDraftBookValid()) {
         <p class="validation-message">All fields are required before saving.</p>
         }
 
@@ -65,7 +63,7 @@
                 Cancel editing
             </button>
 
-            <button type="button" class="primary-button" (click)="requestSaveChanges()">
+            <button type="button" class="primary-button" (click)="requestSaveChanges()" [disabled]="!isDraftBookValid()">
                 Save changes
             </button>
             }
@@ -74,6 +72,10 @@
                 Delete book
             </button>
         </div>
+    </section>
+    } @else if (bookStore.isLoading()) {
+    <section class="details-card">
+        <p>Loading book details...</p>
     </section>
     } @else {
     <section class="details-card">

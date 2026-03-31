@@ -6,4 +6,4 @@ export interface Book {
 }
 
 export type CreateBookDto = Omit<Book, 'id'>;
-export type UpdateBookDto = Book;
+export type UpdateBookDto = Omit<Book, 'id'>;

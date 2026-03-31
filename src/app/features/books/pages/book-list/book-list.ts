@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { BookStoreService } from '../../../../core/services/book-store-service/book-store.service';
 import { ConfirmDialog } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { Router } from '@angular/router';
@@ -11,12 +11,17 @@ import { BookItem } from '../../components/book-item/book-item';
   styleUrl: './book-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BookList {
+export class BookList implements OnInit {
+
   readonly bookStore = inject(BookStoreService);
   private readonly router = inject(Router);
 
   readonly pendingDeleteBookId = signal<string | null>(null);
   readonly isBulkDeleteDialogOpen = signal(false);
+
+  ngOnInit(): void {
+    this.bookStore.init();
+  }
 
   navigateToCreateBook(): void {
     this.router.navigate(['/books/create']);

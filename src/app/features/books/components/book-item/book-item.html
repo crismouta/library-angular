@@ -9,7 +9,7 @@
     <span class="book-meta">{{ book().author }}</span>
     <span class="book-meta">{{ book().category }}</span>
 
-    <button type="button" class="delete-button" (click)="onDeleteClick()">
+    <button type="button" class="delete-button" (click)="onDeleteClick()" [attr.aria-label]="'Delete ' + book().title">
         Delete
     </button>
 </li>

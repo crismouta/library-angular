@@ -27,7 +27,7 @@
     } @else {
     <ul class="book-list">
         @for (book of bookStore.books(); track book.id) {
-        <app-book-item [book]="book" [isSelected]="bookStore.selectedBookIds().has(book.id)"
+        <app-book-item [book]="book" [isSelected]="bookStore.isBookSelected(book.id)"
             (deleteRequested)="requestDeleteBook(book.id)" (selectionToggled)="onSelectionToggle(book.id)" />
         } @empty {
         <p>No books available.</p>
